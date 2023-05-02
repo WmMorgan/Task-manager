@@ -29,7 +29,17 @@ services:
       - MYSQL_DATABASE=yii2advanced
       - MYSQL_USER=yii2advanced
       - MYSQL_PASSWORD=secret
-
+  phpmyadmin:
+    container_name: pma_task
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8081:80
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
   #pgsql:
   #  image: postgres:9.5
   #  environment:

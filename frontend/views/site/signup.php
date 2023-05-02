@@ -1,35 +1,41 @@
 <?php
 
-/** @var yii\web\View $this */
-/** @var yii\bootstrap5\ActiveForm $form */
-/** @var \frontend\models\SignupForm $model */
-
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
-$this->title = 'Signup';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Зарегистрироваться';
 ?>
-<div class="site-signup">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to signup:</p>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
+<div class="login-content">
+    <div class="login-logo">
+        <a href="<?= Yii::$app->homeUrl ?>">
+            <img class="align-content" src="<?= Yii::getAlias('@web/images/logo.png') ?>" alt="">
+        </a>
+    </div>
+    <div class="login-form">
+        <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
+        <div class="form-group">
+                <label>User Name</label>
+            <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label(false) ?>
+            </div>
+            <div class="form-group">
+                <label>Email address</label>
+                <?= $form->field($model, 'email')->label(false) ?>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <?= $form->field($model, 'password')->passwordInput()->label(false) ?>
+            </div>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+        <?= Html::submitButton('Зарегистрироваться', ['class' => 'btn btn-primary btn-flat m-b-30 m-t-30', 'name' => 'signup-button']) ?>
 
-                <?= $form->field($model, 'email') ?>
-
-                <?= $form->field($model, 'password')->passwordInput() ?>
-
-                <div class="form-group">
-                    <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
-        </div>
+        <br>
+            <div class="register-link m-t-15 text-center">
+                <p>Уже есть аккаунт? <?= Html::a('Войти', ['/']) ?></p>
+            </div>
+        <?php ActiveForm::end(); ?>
     </div>
 </div>
+
+
