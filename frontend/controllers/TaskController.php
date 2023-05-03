@@ -29,8 +29,10 @@ class TaskController extends MainController
     }
 
 
+
     public function actionIndex()
     {
+
         $searchModel = new SearchTask();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -107,6 +109,28 @@ class TaskController extends MainController
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionChangeStatus() {
+
+        // Check if there is an Editable ajax request
+        if (isset($_POST['hasEditable'])) {
+            $model = Tasks::findOne($this->request->post('editableKey'));
+//            var_dump(current($this->request->post('Tasks'))); die;
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            $oldValue = $model->status;
+            $newstatus = current($this->request->post('Tasks'))['status'];
+            $model->status = $newstatus;
+                $value = $model->status;
+                if ($model->save(false)) {
+                    return ['output' => $value, 'message' => ''];
+                } else {
+                    return ['output' => $oldValue, 'message' => 'Incorrect Value! Please reenter.'.var_dump($model->getErrors())];
+                }
+        }
+
+        return $this->render('view', ['model' => $model]);
     }
 
     /**

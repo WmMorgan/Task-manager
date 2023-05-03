@@ -9,6 +9,6 @@ use yii\web\Controller;
 
 class MainController extends Controller
 {
-public $layout = 'dashboard';
+
 
 }

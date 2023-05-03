@@ -5,11 +5,11 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\TaskModel\Tasks $model */
 
-$this->title = 'Create Tasks';
-$this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
+$this->title = 'Создать задачи';
+$this->params['breadcrumbs'][] = ['label' => 'Создать задачи', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="tasks-create">
+<div class="content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

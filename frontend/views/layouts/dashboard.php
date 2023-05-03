@@ -2,10 +2,10 @@
 
 use common\widgets\Alert;
 use frontend\assets\DashboardAsset;
-use yii\bootstrap5\Breadcrumbs;
-use yii\bootstrap5\Html;
-use yii\bootstrap5\Nav;
-use yii\bootstrap5\NavBar;
+use yii\bootstrap4\Breadcrumbs;
+use yii\bootstrap4\Html;
+use yii\bootstrap4\Nav;
+use yii\bootstrap4\NavBar;
 
 DashboardAsset::register($this);
 ?>
@@ -237,7 +237,7 @@ DashboardAsset::register($this);
 
                         <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a>
 
-                        <a class="nav-link" href="#"><i class="fa fa-power -off"></i>Logout</a>
+                        <?= Html::a('<i class="fa fa-power -off"></i> Выйти', ['site/logout'], ['class' => 'nav-link']) ?>
                     </div>
                 </div>
 
