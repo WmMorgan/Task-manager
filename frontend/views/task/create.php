@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var app\models\TaskModel\Tasks $model */
 
 $this->title = 'Создать задачи';
-$this->params['breadcrumbs'][] = ['label' => 'Создать задачи', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Задания', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="content">

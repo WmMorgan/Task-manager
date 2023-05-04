@@ -9,22 +9,12 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\PhpManager',
+            'defaultRoles' => ['admin'], // your define roles
+        ],
     ],
     'modules' => [
         'gridview' => ['class' => 'kartik\grid\Module'],
-        'notifications' => [
-            'class' => 'webzop\notifications\Module',
-            'channels' => [
-                'screen' => [
-                    'class' => 'webzop\notifications\channels\ScreenChannel',
-                ],
-                'email' => [
-                    'class' => 'webzop\notifications\channels\EmailChannel',
-                    'message' => [
-                        'from' => 'example@email.com'
-                    ],
-                ],
-            ],
-        ],
     ]
 ];

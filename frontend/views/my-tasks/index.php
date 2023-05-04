@@ -10,18 +10,13 @@ use yii\grid\ActionColumn;
 use yii\widgets\Pjax;
 
 
-$this->title = 'Задания';
+$this->title = 'Задания, назначенные вам';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="content">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p class="d-flex justify-content-end">
-        <?= Html::a('Создать задачи', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -62,8 +57,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'templateAfter' =>  Editable::INLINE_AFTER_2
                     ],
                     'asPopover' => false,
-//                    'contentOptions' => ['style' => 'background: white; padding: 10px; border: 1px dashed rgb(187 186 186);'],
-//                    'header' => 'Status',
                 'formOptions' => ['action' => ['change-status']],
                     'inputType' => Editable::INPUT_DROPDOWN_LIST,
                     'data' => Tasks::getStatus(),
@@ -77,14 +70,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => ['datetime', 'php:d-m-Y / H:i']
             ],
             [
-                'attribute' => 'updated_at',
-                'format' => ['datetime', 'php:d-m-Y / H:i']
-            ],
-            [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Tasks $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                }
+                },
+                'template' => '{view}'
             ],
         ],
     ]); ?>

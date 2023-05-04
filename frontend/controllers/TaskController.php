@@ -15,8 +15,15 @@ class TaskController extends MainController
 
     public function behaviors()
     {
+        $access = parent::behaviors();
+        $access['access']['rules']['status'] = [
+          'actions' => ['change-status'],
+          'allow' => true,
+          'roles' => ['@']
+        ];
+
         return array_merge(
-            parent::behaviors(),
+            $access,
             [
                 'verbs' => [
                     'class' => VerbFilter::className(),
@@ -29,10 +36,8 @@ class TaskController extends MainController
     }
 
 
-
     public function actionIndex()
     {
-
         $searchModel = new SearchTask();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -66,6 +71,8 @@ class TaskController extends MainController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+
+                \Yii::$app->session->setFlash('success', "Задача успешно создана");
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -89,6 +96,8 @@ class TaskController extends MainController
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+
+            \Yii::$app->session->setFlash('success', "Задача успешно изменена");
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -111,26 +120,26 @@ class TaskController extends MainController
         return $this->redirect(['index']);
     }
 
-    public function actionChangeStatus() {
+    public function actionChangeStatus()
+    {
 
         // Check if there is an Editable ajax request
-        if (isset($_POST['hasEditable'])) {
-            $model = Tasks::findOne($this->request->post('editableKey'));
-//            var_dump(current($this->request->post('Tasks'))); die;
-            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (\Yii::$app->request->isAjax) {
+            if (isset($_POST['hasEditable'])) {
+                $model = Tasks::findOne($this->request->post('editableKey'));
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-            $oldValue = $model->status;
-            $newstatus = current($this->request->post('Tasks'))['status'];
-            $model->status = $newstatus;
+                $oldValue = $model->status;
+                $newstatus = current($this->request->post('Tasks'))['status'];
+                $model->status = $newstatus;
                 $value = $model->status;
                 if ($model->save(false)) {
                     return ['output' => $value, 'message' => ''];
                 } else {
-                    return ['output' => $oldValue, 'message' => 'Incorrect Value! Please reenter.'.var_dump($model->getErrors())];
+                    return ['output' => $oldValue, 'message' => 'Incorrect Value! Please reenter.'];
                 }
+            }
         }
-
-        return $this->render('view', ['model' => $model]);
     }
 
     /**

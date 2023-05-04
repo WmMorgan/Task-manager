@@ -4,7 +4,7 @@ namespace app\models\TaskModel;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\TaskModel\Tasks;
+
 
 /**
  * SearchTask represents the model behind the search form of `app\models\TaskModel\Tasks`.
@@ -17,8 +17,7 @@ class SearchTask extends Tasks
     public function rules()
     {
         return [
-            [['id', 'user_id', 'responsible', 'deadline', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['name'], 'safe'],
+            [['user_id', 'responsible', 'status', 'created_at'], 'integer'],
         ];
     }
 
@@ -27,8 +26,9 @@ class SearchTask extends Tasks
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+        $scenarios = parent::scenarios();
+        $scenarios['responsible'] = ['user_id', 'status']; //Scenario Values Only Accepted
+        return $scenarios;
     }
 
     /**
@@ -42,7 +42,19 @@ class SearchTask extends Tasks
     {
         $query = Tasks::find();
 
-        // add conditions that should always apply here
+        // Отображение задач, назначенных пользователю
+        if ($this->scenario == 'responsible') {
+            $query->andFilterWhere([
+                'responsible' => \Yii::$app->user->id
+            ]);
+        } else
+        // Если у вас нет прав администратора, показывать только созданные вами сообщения
+        if(!\Yii::$app->user->can('admin')) {
+            $query->andFilterWhere([
+                'user_id' => \Yii::$app->user->id
+            ]);
+        }
+
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

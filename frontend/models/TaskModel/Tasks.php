@@ -2,6 +2,7 @@
 
 namespace app\models\TaskModel;
 
+use app\components\NotificationBehavior;
 use common\models\User;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -37,11 +38,13 @@ class Tasks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'deadline'], 'required'],
+            [['name', 'deadline', 'responsible'], 'required'],
             [['user_id', 'responsible', 'status', 'created_at', 'updated_at'], 'integer'],
             [['deadline'], 'changeToUnixTime'],
             [['name'], 'string', 'max' => 255],
-            ['name', 'unique'],
+            ['name', 'unique',
+                'targetAttribute' => ['responsible', 'name'],
+                'message' => 'У этого пользователя есть это задание'],
             ['user_id', 'default', 'value' => Yii::$app->user->id],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -56,6 +59,9 @@ class Tasks extends \yii\db\ActiveRecord
             [
                 'class' => TimestampBehavior::class,
             ],
+            [
+                'class' => NotificationBehavior::class,
+            ],
         ];
     }
 
@@ -64,7 +70,7 @@ class Tasks extends \yii\db\ActiveRecord
      * @param $params
      * @return bool
      */
-    public function changeToUnixTime($attribute, $params): bool
+    public function changeToUnixTime($attribute, $params)
     {
         $toUnix = $this->{$attribute};
 
@@ -83,7 +89,7 @@ class Tasks extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'ID пользователя',
-            'responsible' => 'Ответственный',
+            'responsible' => 'ID Ответственный',
             'name' => 'Название задачи',
             'deadline' => 'Крайний срок',
             'status' => 'статус',
@@ -120,17 +126,25 @@ class Tasks extends \yii\db\ActiveRecord
         if ($this->responsible == null) {
             return "Не указан";
         } else {
-            return \app\models\User::findOne(['id' => $this->responsible])->username;
+            return \app\models\User::findOne(['id' => $this->responsible])->username . '
+            (ID: '.$this->responsible .')';
         }
     }
 
 
-    public static function getStatus()
+    public static function getStatus():array
     {
         return [
             self::PROCCESS => "в работе",
             self::COMPLETED => "завершено",
             self::CANCELED => "отменено"
         ];
+    }
+
+
+    public function getOwner():string
+    {
+        $model = \app\models\User::findOne($this->user_id);
+        return $model->username;
     }
 }
