@@ -105,7 +105,8 @@ class Tasks extends \yii\db\ActiveRecord
      */
     public function getTaskComments()
     {
-        return $this->hasMany(TaskComments::class, ['task_id' => 'id']);
+        return $this->hasMany(TaskComments::class, ['task_id' => 'id'])->
+        orderBy(['created_at' => SORT_ASC]);;
     }
 
     /**

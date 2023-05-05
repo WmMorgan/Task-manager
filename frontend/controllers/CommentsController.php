@@ -38,8 +38,12 @@ class CommentsController extends Controller
         if ($model->load(\Yii::$app->request->post())) {
             if ($model->save()) {
 
+                $task = $model->getTask()->one();
+                $route = $task->responsible == \Yii::$app->user->id ?
+                    'my-tasks/view' : 'task/view';
+
                 return $this->redirect(
-                    ['task/view',
+                    [$route,
                         'id' => \Yii::$app->request->post('TaskComments')['task_id'],
                         '#' => 'last-'.$model->id]);
             }

@@ -3,6 +3,8 @@
 namespace frontend\controllers;
 
 use app\models\TaskModel\SearchTask;
+use app\models\TaskModel\Tasks;
+use yii\db\Expression;
 use yii\filters\AccessControl;
 
 class MyTasksController extends TaskController
@@ -15,7 +17,7 @@ class MyTasksController extends TaskController
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'expiring-tasks'],
                         'allow' => true,
                         'roles' => ['@']
                     ],
@@ -35,6 +37,9 @@ class MyTasksController extends TaskController
         ];
     }
 
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
         $searchModel = new SearchTask(['scenario' => 'responsible']);
@@ -45,6 +50,21 @@ class MyTasksController extends TaskController
             'dataProvider' => $dataProvider,
         ]);
 
+    }
+
+    /**
+     * @return string
+     * Истекающие задачи
+     */
+    public function actionExpiringTasks() {
+        $model = Tasks::find()
+            ->where(['between', 'deadline', new Expression("UNIX_TIMESTAMP()"), new Expression("UNIX_TIMESTAMP(NOW() + INTERVAL 7 DAY)") ])
+            ->andWhere(['responsible' => \Yii::$app->user->id])
+            ->all();
+
+        return $this->render('expiring-tasks', [
+            'model' => $model
+        ]);
     }
 
     /**
